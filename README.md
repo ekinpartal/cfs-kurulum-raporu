@@ -100,6 +100,15 @@ cd ~/cFS/tools/cFS-GroundSystem
 python3 GroundSystem.py
 ```
 
+**Adım 9: Hızlı Başlatma İçin Kısayol (Alias) Oluşturma**
+Kurulum sonrası sistemi her seferinde uzun dizin yolları yazarak başlatmamak adına Ubuntu `~/.bashrc` dosyasına kalıcı kısayollar eklenmiştir:
+```bash
+echo 'alias uydu="cd ~/cFS/build/exe/cpu1 && ./core-cpu1"' >> ~/.bashrc
+echo 'alias istasyon="cd ~/cFS/tools/cFS-GroundSystem && python3 GroundSystem.py"' >> ~/.bashrc
+source ~/.bashrc
+```
+*Bu sayede sistemi tekrar çalıştırmak için herhangi bir indirme veya derleme işlemi gerekmez. Terminale sadece `uydu` yazılarak arka planda cFS simülasyonu başlatılır, ikinci terminale `istasyon` yazılarak doğrudan yer kontrol paneli açılır.*
+
 ## 5. Sonuçlar ve Veri Doğrulama
 
 Sistemin başlatılmasının ardından, terminal üzerinde cFE Core bileşenlerinin başarılı bir şekilde uyanış mesajları (boot sequence) ve işletim sistemi kayıtları gözlemlenmiştir. 
