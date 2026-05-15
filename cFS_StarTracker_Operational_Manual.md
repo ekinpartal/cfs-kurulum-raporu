@@ -1,83 +1,98 @@
 # NASA cFS Otonom Star Tracker Entegrasyonu ve Operasyonel Arayüz Kontrol Kılavuzu
 
 ## Özet (Abstract)
-Bu proje; NASA core Flight System (cFS) mimarisi üzerinde çalışan bir Otonom Star Tracker (Yıldız Takipçisi) payload'unun entegrasyonunu ve bu sistemi kontrol etmek/izlemek için geliştirilen çok katmanlı kontrol arayüzlerini içermektedir. 
+Bu proje; NASA core Flight System (cFS) mimarisi üzerinde çalışan bir Otonom Star Tracker (Yıldız Takipçisi) payload'unun entegrasyonunu, bilimsel görüntü işleme katmanlarını ve bu sistemi kontrol etmek için geliştirilen çok katmanlı görsel arayüzleri kapsamaktadır. 
 
-Aşağıdaki kılavuz, sistemin çalıştırılması esnasında açılan fiziksel terminallerin, NASA arayüzündeki butonların ve özel geliştirilen Dashboard'un **operasyonel işlevlerini** açıklayan pratik bir kullanıcı ve sistem referans rehberidir.
+Bu kılavuz, hem sistemin çalıştırılması esnasında kullanılan fiziksel buton ve terminallerin görevlerini açıklayan bir **Kullanıcı Kılavuzu**, hem de bugün sıfırdan geliştirip entegre ettiğimiz **Gelişmiş Mühendislik ve Görüntü İşleme Çözümlerini** içeren kapsamlı bir teknik referans belgesidir.
 
 ---
 
-## 🖥️ 1. Sistem Çalışma Düzeni ve Terminal Matrisi (Ubuntu/WSL Terminalleri)
+## 🌟 1. Geliştirilen Uygulama Yetenekleri ve Mühendislik Başarıları
 
-Sistem tam kapasite çalıştığında arka planda **3 ila 4 farklı Ubuntu/WSL terminali** aktif görev yapar. Her terminal, uydunun ve yer sisteminin fiziksel bir katmanını temsil eder:
+Bugün gerçekleştirdiğimiz çalışmalarla uydunun beynini ve takip arayüzünü sadece veri okuyan değil, gelişmiş görüntü işleme ve CAD tipi analizler yapabilen bilimsel bir merkeze dönüştürdük:
+
+### 🌌 A. Yüksek Çözünürlüklü Çift Uzay Sahnesi ve Dinamik Tampon Bellek (Dual-Scene Buffer)
+*   Sistemde tek bir referans fotoğrafla sınırlı kalınmamış; NASA Hubble/JWST gözlemlerinden ilham alan, yüzlerce keskin yıldız ve kozmik bulutsular barındıran **2. bir özel test görseli (Dense Star Field)** tasarlanarak sisteme entegre edilmiştir.
+*   Uydunun kamerasının fiziksel olarak yön değiştirmesini simüle etmek amacıyla, Dashboard arayüzünden seçilen görüntü anlık olarak `float32` ikili (binary) formatına serileştirilmekte ve uydunun kamera bellek dosyası olan **`test_yildiz.bin`** üzerine yazılarak eş zamanlı güncellenmektedir.
+
+### 🎨 B. Bilimsel Termal Görüntüleme Motoru (Infrared Jet Colormap)
+*   Optik izlemede kızılötesi dalga boyunu simüle etmek için **Indexed8** tabanlı hızlı bir termal renklendirme motoru yazılmıştır.
+*   Geliştirilen **Jet Colormap** algoritması sayesinde; soğuk derin uzay bölgeleri koyu lacivert tonlarda ezilmeden gösterilirken, sıcak yıldız çekirdekleri ve nebulalar parlak sarı-kırmızı renk spektrumuna hassas bir şekilde dağıtılır.
+
+### 🔍 C. CAD Tipi İnteraktif Gözlem ve Zoom Altyapısı
+*   Görsel takip ekranı, standart sabit pencerelerin ötesine geçerek tam bir CAD yazılımı gibi çalışacak şekilde tasarlanmıştır:
+    *   **İmleç Odaklı Zoom:** Fare tekerleği döndürüldüğünde görüntüyü doğrudan fare imlecinin bulunduğu koordinat merkezinde büyütüp küçültebilir.
+    *   **Sürükle-Bırak (Pan):** Fare sol tuşu basılı tutulup sürüklenerek, derin uzay fotoğrafının içinde tıpkı bir uzay teleskobu operatörü gibi gezinti yapılabilir.
+
+### 📐 D. Takımyıldız Ağı ve Uzamsal Nirengi (Constellation Tracking Net)
+*   Uyduların uzayda yön belirlemek (Attitude Determination) için kullandığı yıldız eşleştirme matematiğini simüle eden bir **Vektör Bağlantı Ağı** yazılmıştır.
+*   Sistem, uydudan gelen 5 ana yıldızın arasına neon mavi kesikli lazer çizgileri çeker.
+*   Her çizgideki Öklidyen mesafeyi ($d = \sqrt{\Delta x^2 + \Delta y^2}$) pikselsel olarak anlık hesaplar ve çizginin tam ortasına bir etiketle (Örn: `245.8px`) basar.
+
+### 🛸 E. 30 FPS Aktif Konik Radar Arama Modülü
+*   Görüntünün durağanlığını kırmak ve sistemin "aktif tarama" anını sembolize etmek amacıyla, arayüze saniyede 30 kare hızla dönen konik bir radar animasyon katmanı eklenmiştir.
+*   Bu modül; uydunun ilk açılışta yaptığı **Lost-in-Space** yönelim aramasını ve bilimsel CMOS sensörlerin aktif piksel okuma (Readout) sürecini görselleştirir.
+
+---
+
+## 🖥️ 2. Sistem Çalışma Düzeni ve Terminal Matrisi (Ubuntu/WSL Terminalleri)
+
+Arka planda çalışan Ubuntu terminalleri, uydunun ve yer sisteminin fiziksel birer katmanını temsil eder:
 
 | Terminal Adı | Çalıştırılan Komut / Görev | Operasyonel Karşılığı |
 | :--- | :--- | :--- |
-| **Terminal 1: Uydunun Beyni** | `./core-cpu1` | Gerçek uydunun üzerindeki ana uçuş bilgisayarını (OBC) temsil eder. Kapatılırsa uydu çöker. |
-| **Terminal 2: Yer İstasyonu** | `python3 GroundSystem.py` | NASA'nın fiziksel yer kontrol merkezindeki ana veri dağıtım sunucusunu (Router) başlatır. |
-| **Terminal 3: Görsel Monitör** | `start-tracker` veya `UYDU_DASHBOARD.bat` | Uydudan gelen verileri anlık olarak çizdiren Dark-SciFi görsel takip monitörümüzdür. |
-| **Terminal 4: Komut Kanalları** | `GroundSystem.py` tarafından otomatik açılır. | Yer istasyonundaki gri alt pencerelerin veri loglarının aktığı terminal ekranıdır. |
+| **Terminal 1: Uydunun Beyni** | `./core-cpu1` | Gerçek uydunun üzerindeki ana uçuş bilgisayarını (OBC) temsil eder. C kodlu yıldız algılama algoritmaları burada koşar. |
+| **Terminal 2: Yer İstasyonu** | `python3 GroundSystem.py` | NASA'nın yer kontrol merkezindeki ana veri dağıtım sunucusunu (Router) başlatır. |
+| **Terminal 3: Görsel Monitör** | `start-tracker` veya `UYDU_DASHBOARD.bat` | Uydudan gelen verileri işleyen ve yukarıda açıklanan 5 katmanlı görselleştirmeyi yapan monitörümüzdür. |
 
 ---
 
-## 📡 2. NASA Yer İstasyonu Panelleri ve Kritik Butonlar
+## 📡 3. NASA Yer İstasyonu Panelleri ve Kritik Butonlar
 
-Yer istasyonu (Ground System) arayüzünde karşımıza çıkan gri pencereler ve bu pencerelerdeki butonların fiziksel dünyadaki görevleri şunlardır:
+NASA GroundSystem arayüzündeki butonların operasyonel dünyadaki karşılıkları şunlardır:
 
 ### 🟦 A. TO LAB (Telemetry Output Lab) Paneli
-Bu panel, uydunun veri gönderme antenini aktif etmek için kullanılır.
 *   **Kritik Buton:** `TO_LAB_OUTPUT_ENABLE_CC`
-*   **Fiziksel Görevi:** Uydunun dış dünya ile olan telsiz/UDP bağlantısını açar. Bu butona basıp `Send` demeden önce Dashboard'a veya grafik ekranına tek bir bayt bile veri akmaz.
+*   **Fiziksel Görevi:** Uydunun yer istasyonuna veri gönderen verici antenini (Telemetry Transmitter) açar. Bu düğmeye basılmadan hiçbir telemetri verisi alınamaz.
 
 ### 🟩 B. SAMPLE APP (CPU1) Paneli
-Yıldız takipçisi (Star Tracker) payload'unu doğrudan yönettiğimiz ana komuta merkezidir.
 *   **Kritik Buton:** `SAMPLE_APP_FIND_STARS_CC`
-*   **Fiziksel Görevi:** Uydunun üzerindeki bilimsel kamerayı tetikler. Kamera o an hangi yöne bakıyorsa bir poz çeker, uydunun C motoru bu görseli piksel piksel tarayarak yıldızları tespit eder ve koordinatlarını anında yeryüzüne (Dashboard'a) gönderir.
+*   **Fiziksel Görevi:** Uydunun bilimsel kamerasının deklanşörünü tetikler. Kamera o an hangi sahneye bakıyorsa fotoğrafı çeker, C motoru bu görseli tarayarak yıldızları bulur ve koordinatları dünyaya gönderir.
 
 ---
 
-## 🪐 3. Görsel Operasyon Paneli (V.O.D. Dashboard) Butonları ve İşlevleri
+## 🪐 4. Görsel Operasyon Paneli (V.O.D. Dashboard) Kontrolleri
 
-Geliştirdiğimiz PyQt5 tabanlı arayüz, uydunun canlı durumunu takip etmemizi ve görsel ayarları yapmamızı sağlar. Ekrandaki butonların işlevleri şu şekildedir:
+Dashboard arayüzünde yer alan ve uygulamaya eklediğimiz o efsanevi özellikleri yöneten kontroller:
 
-### 🎯 A. TARGET ACTIVE SCENE (Sahne Seçici Menü)
-*   **Görevi:** Uydunun kamerasını fiziksel olarak farklı bir gök bölgesine çevirmesini simüle eder.
-*   **Çalışma Şekli:** Menüden "Scene 2" seçildiği an, Dashboard uydunun beynindeki tampon belleğe (`test_yildiz.bin`) yeni görseli yazar. Ardından Ground System'dan `FIND_STARS` komutu gönderildiğinde, uydu bu yeni sahneyi işlemeye başlar.
-
-### 🔳 B. VISUAL CONTROLS (Görsel Mod Seçiciler)
-*   **STANDARD VIEW:** Uydunun CMOS kamerasından gelen ham, siyah-beyaz optik görüntüyü ekrana yansıtır.
-*   **THERMAL CAMERA:** Kızılötesi (Infrared) görüntüleme modunu açar. Görüntüyü bilimsel **Jet Colormap** algoritmasıyla renklendirerek, soğuk derin uzayı lacivert, parlayan sıcak yıldızları ve bulutsuları ise sarı-kırmızı tonlarda gösterir.
-*   **FIT IMAGE TO SCREEN:** Görüntüyü pencere boyutuna tam olarak sığdırır. (İstendiğinde farenin tekerleği ile zoom yapılabilir veya fareyle sürükleyerek görüntü içinde gezilebilir).
-
-### 📐 C. DYNAMIC OVERLAYS (Dinamik Vektör Katmanları)
-*   **BUILD CONSTELLATION NET:** Tespit edilen yıldızları birbirine bağlayan neon mavi renkte kesikli lazer çizgilerini açar/kapatır. Yıldızlar arasındaki pikselsel mesafeleri (örn: `371.4px`) anlık olarak hesaplayıp çizgilerin ortasına yazar. (Navigasyonel nirengi hesaplaması için kullanılır).
-*   **ENABLE ACTIVE RADAR SCANNER:** Ekranın merkezinden yayılan ve saniyede 30 tur dönen konik radar dalgasını aktif eder. Uydunun o an boşta durmadığını, optik sensörlerinin aktif olarak okuma yaptığını (CMOS Readout) ve çevrede tehdit aradığını gösterir.
+*   **🎯 TARGET ACTIVE SCENE:** Uydunun kamerasını fiziksel olarak farklı bir gök bölgesine (Scene 1 / Scene 2) çevirmesini simüle eder ve tampon belleği ezer.
+*   **🔳 STANDARD VIEW:** CMOS kameradan gelen ham, siyah-beyaz astronomik görüntüyü gösterir.
+*   **🔳 THERMAL CAMERA:** Jet Colormap renk algoritmasını kullanarak kızılötesi görüntülemeyi aktif eder.
+*   **🔳 FIT IMAGE TO SCREEN:** Görüntüyü pencereye sığdırır, interaktif zoom modunun başlangıç ayarıdır.
+*   **📐 BUILD CONSTELLATION NET:** Yıldızları lazer çizgileriyle bağlayıp navigasyonel mesafe nirengi hesaplamasını başlatır.
+*   **🛸 ENABLE ACTIVE RADAR SCANNER:** Saniyede 30 tur dönen konik sensör okuma radarını açıp kapatır.
 
 ---
 
-## 🛠️ 4. Proje Sürecinde Giderilen Kritik Hatalar (Hata Günlüğü)
+## 🛠️ 5. Giderilen Kritik Hatalar ve Hata Günlüğü (Bug Logging)
 
-Projenin geliştirilmesi sırasında karşılaşılan ve çözülen operasyonel sorunlar şunlardır:
+### 🔴 Hata 1: Sıfır Veri Akışı Sorunu (Scheduler Tablo Eksikliği)
+*   **Analiz:** Sistemler açık olmasına rağmen veri akmıyordu.
+*   **Çözüm:** cFS çekirdek tablosundaki (`sch_lab_table.c`) Housekeeping tetikleyicisinin eksik olduğu görüldü. 1Hz tetikleme kodu girilip sistem derlendiğinde sorun çözüldü.
 
-### 🔴 Hata 1: Sıfır Veri Akışı Sorunu (Scheduler Hatası)
-*   **Belirti:** Tüm sistemler açık olmasına rağmen `CMD COUNT` artmıyor ve veri akmıyordu.
-*   **Çözüm:** cFS çekirdek tablosunda (`sch_lab_table.c`) Housekeeping tetikleyicisinin eksik olduğu saptandı. Tabloya 1Hz tetikleme kodu girilip sistem yeniden derlendiğinde veri akışı başladı.
-
-### 🔴 Hata 2: Nişangahların Ekran Dışına Taşması (Dizilim Uyuşmazlığı)
-*   **Belirti:** Dashboard üzerinde yıldızların etrafına çizilmesi gereken hedef yuvarlakları ekranın dışında (Y=710px gibi) anlamsız konumlarda çıkıyordu.
-*   **Çözüm:** Uydunun hafızaya ardışık (Sequential) yazma düzeni ile Yer İstasyonunun çaprazlama (Interleaved) okuma düzeninin çakıştığı tespit edildi. Dashboard veri çözücü kodu bayt düzeyinde yeniden düzenlenerek nişangahların tam yıldız merkezlerine kilitlenmesi sağlandı.
+### 🔴 Hata 2: Nişangahların Ekran Dışına Taşması (Sequential-Interleaved Uyuşmazlığı)
+*   **Analiz:** Y koordinatları `710px` gibi limit dışı çıkıyordu ve nişangahlar yıldızları ıskalıyordu.
+*   **Çözüm:** Uydunun C kodundaki ardışık (Sequential) veri paketleme sırası ile Yer İstasyonunun beklediği çaprazlama (Interleaved) okuma sırasının çakıştığı keşfedildi. Dashboard veri çözücüsü bayt bazında ardışık düzene göre baştan yazılarak %100 doğruluk sağlandı.
 
 ---
 
-## 🚀 5. Sistemi Sıfırdan Açma Protokolü
+## 🚀 6. Sistemi Devreye Alma Protokolü
 
-Uygulamayı sorunsuz bir şekilde başlatmak için sırasıyla şu adımlar izlenmelidir:
-
-1.  **Uydunun Beyni (WSL Terminal 1):** `cd ~/cFS/build/exe/cpu1` dizinine gidip `./core-cpu1` çalıştırılır.
-2.  **Yer İstasyonu (WSL Terminal 2):** `cd ~/cFS/tools/cFS-GroundSystem` dizinine gidip `python3 GroundSystem.py` çalıştırılır.
-3.  **Görsel Takip Ekranı (Windows):** Masaüstündeki **`UYDU_DASHBOARD.bat`** dosyasına çift tıklanır.
-4.  **Telemetri Bağlantısı:** Yer istasyonundan `TO LAB CPU1` seçilir, hedef IP `127.0.0.1` yazılarak `TO_LAB_OUTPUT_ENABLE_CC` komutu **Send** edilir.
-5.  **Sahne Analizi:** Dashboard'dan sahne seçilir ve yer istasyonundaki `SAMPLE APP` panelinden `SAMPLE_APP_FIND_STARS_CC` komutu **Send** edilerek işlem tamamlanır.
+1.  **Uydunun Beyni:** `cd ~/cFS/build/exe/cpu1` dizininden `./core-cpu1` başlatılır.
+2.  **Yer İstasyonu:** `cd ~/cFS/tools/cFS-GroundSystem` dizininden `python3 GroundSystem.py` başlatılır.
+3.  **Görsel Takip Ekranı:** Masaüstündeki **`UYDU_DASHBOARD.bat`** dosyasına çift tıklanır.
+4.  **Telemetri Bağlantısı:** Yer istasyonundan `TO LAB CPU1` seçilir, IP `127.0.0.1` girilir ve `TO_LAB_OUTPUT_ENABLE_CC` komutu **Send** edilir.
+5.  **Sahne Analizi:** Dashboard'dan sahne belirlenir ve `SAMPLE APP` üzerinden `SAMPLE_APP_FIND_STARS_CC` **Send** edilir.
 
 ---
-### Uçuş Durumu: TÜM SİSTEMLER OPERASYONEL VE NOMİNAL. 🚀📡🛰️
+### Uçuş Durumu: TÜM SİSTEMLER VE GÖRÜNTÜ İŞLEME KATMANLARI NOMİNAL. 🚀📡🌌🛰️
