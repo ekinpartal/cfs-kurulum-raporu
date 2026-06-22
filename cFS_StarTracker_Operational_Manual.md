@@ -33,6 +33,11 @@ Bugün gerçekleştirdiğimiz çalışmalarla uydunun beynini ve takip arayüzü
 *   Görüntünün durağanlığını kırmak ve sistemin "aktif tarama" anını sembolize etmek amacıyla, arayüze saniyede 30 kare hızla dönen konik bir radar animasyon katmanı eklenmiştir.
 *   Bu modül; uydunun ilk açılışta yaptığı **Lost-in-Space** yönelim aramasını ve bilimsel CMOS sensörlerin aktif piksel okuma (Readout) sürecini görselleştirir.
 
+### 🗺️ F. Gerçek Zamanlı Yörünge ve Dünya Takip Paneli (LEO Orbital Tracker)
+*   Sisteme LEO (Alçak Dünya Yörüngesi) yörünge mekaniğini simüle eden matematiksel bir izleyici eklenmiştir.
+*   Arayüzün altında yer alan fütüristik bir dünya haritası üzerinde uydunun (SAT-1) yörünge izi (ground track) neon kesikli çizgilerle çizilir ve uydunun konumu anlık güncellenir.
+*   Enlem (Latitude), Boylam (Longitude), İrtifa (Altitude), Yörünge Hızı (Velocity) ve tamamlanan tur sayısı (Orbit Revs) canlı olarak hesaplanarak yan panelde gösterilir.
+
 ---
 
 ## 🖥️ 2. Sistem Çalışma Düzeni ve Terminal Matrisi (Ubuntu/WSL Terminalleri)
@@ -71,6 +76,7 @@ Dashboard arayüzünde yer alan ve uygulamaya eklediğimiz o efsanevi özellikle
 *   **🔳 FIT IMAGE TO SCREEN:** Görüntüyü pencereye sığdırır, interaktif zoom modunun başlangıç ayarıdır.
 *   **📐 BUILD CONSTELLATION NET:** Yıldızları lazer çizgileriyle bağlayıp navigasyonel mesafe nirengi hesaplamasını başlatır.
 *   **🛸 RADAR BEAM ON / OFF BUTONLARI:** Saniyede 30 tur dönen konik sensör okuma radarını başlatmak veya tamamen gizlemek için kullanılan özel kontrol butonlarıdır.
+*   **🗺️ LEO ORBITAL TRACKER PANELİ:** Uydunun yörünge hareketini dünya haritası üzerinde canlı olarak izleyen ve konum telemetrisini gösteren izleme panelidir.
 
 ---
 
