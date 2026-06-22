@@ -38,6 +38,11 @@ Bugün gerçekleştirdiğimiz çalışmalarla uydunun beynini ve takip arayüzü
 *   Arayüzün altında yer alan fütüristik bir dünya haritası üzerinde uydunun (SAT-1) yörünge izi (ground track) neon kesikli çizgilerle çizilir ve uydunun konumu anlık güncellenir.
 *   Enlem (Latitude), Boylam (Longitude), İrtifa (Altitude), Yörünge Hızı (Velocity) ve tamamlanan tur sayısı (Orbit Revs) canlı olarak hesaplanarak yan panelde gösterilir.
 
+### 🔴 G. Gerçek Zamanlı Canlı ISS ve Dünya İzleme Sekmesi (Live Space Tracker)
+*   Arayüze yerleştirilen `QTabWidget` sayesinde, cFS simülasyonunun yanı sıra gerçek dünya uzay operasyonlarını izleme yeteneği kazandırılmıştır.
+*   **Gerçek Zamanlı ISS Takibi:** `LiveISSTrackerWidget`, açık kaynaklı `open-notify` API servisine bağlanarak uzayda şu an aktif olarak uçmakta olan **Uluslararası Uzay İstasyonu (ISS)**'nun canlı coğrafi koordinatlarını saniyeler içinde çeker ve harita üzerinde **neon turuncu** renkli iz düşümüyle gösterir.
+*   **Canlı Dünya Görüntüsü (DSCOVR/EPIC):** NASA'nın Lagrange-1 noktasındaki **DSCOVR** uydusunda yer alan **EPIC (Earth Polychromatic Imaging Camera)** kamerasından çekilmiş en güncel gerçek Dünya fotoğrafları arka planda indirilerek canlı yayın modülüyle ekrana basılır.
+
 ---
 
 ## 🖥️ 2. Sistem Çalışma Düzeni ve Terminal Matrisi (Ubuntu/WSL Terminalleri)
