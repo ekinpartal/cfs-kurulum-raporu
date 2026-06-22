@@ -49,6 +49,20 @@ Bugün gerçekleştirdiğimiz çalışmalarla uydunun beynini ve takip arayüzü
 *   **Uzaydaki İnsan Sayısı (Astronauts in Space):** Şu an uzayda aktif görev yapan astronot sayısı (`TOTAL CREW`) ve isimleri `astros.json` API'sinden çekilerek dinamik scroll panelinde listelenir.
 *   **Canlı Dünya Görüntüsü (DSCOVR/EPIC):** NASA'nın Lagrange-1 noktasındaki **DSCOVR** uydusunda yer alan **EPIC (Earth Polychromatic Imaging Camera)** kamerasından çekilmiş en güncel gerçek Dünya fotoğrafları arka planda indirilerek canlı yayın modülüyle ekrana basılır.
 
+### 🛡️ H. Otonom Hata Tespit, Yalıtım ve Kurtarma Sistemi (FDIR)
+Uydunun uzay radyasyonu ve donanımsal arızalara karşı güvenliğini otonom olarak yöneten **FDIR (Fault Detection, Isolation, and Recovery)** modülü sol kontrol paneline entegre edilmiştir.
+
+*   **Hata Enjeksiyon Paneli (Fault Injector):** Mühendislik testleri için 3 farklı arıza elle tetiklenebilir:
+    1.  **TEMP RADIATION SEU:** Sıcaklık sensörünün radyasyon sebebiyle $+185.30^\circ C$ gibi hatalı bir değere kilitlenmesini sağlar.
+    2.  **CAM MEMORY CORRUPTION:** Yıldız kamerasındaki piksel okuma hatasını simüle eder, algılanan yıldız sayısını 0'a düşürür ve kamera görüntüsünü karartır.
+    3.  **TELEMETRY LINK GLITCH:** Yer istasyonu bağlantısının koptuğunu simüle ederek veri akışını dondurur.
+*   **Otonom Watchdog Algoritması:** 
+    *   Sistem verilerini sürekli izler. Limit dışı veya anomali tespit ettiği an (Örn: $>80^\circ C$ sıcaklık veya sıfır yıldız) uydunun durumunu otomatik olarak **`🔴 SAFE MODE`** (Güvenli Mod) durumuna alır.
+*   **Çok Aşamalı Kurtarma Senaryosu (Multi-Stage Recovery Escalation):**
+    1.  **Aşama 1 (Yazılımsal Reset):** Arıza algılandıktan 3 saniye sonra, FDIR modülü arızalı alt sisteme otonom bir yazılımsal reset komutu gönderir (`RESET CMD`).
+    2.  **Aşama 2 (Yedek Donanıma Geçiş - Hardware Redundancy):** Eğer reset işlemi arızayı çözmezse, FDIR hatayı izole eder ve uydunun yedek kanalı olan **`CH-B` (Yedek Kanal B)** sensör/verici sistemine otomatik geçiş yapar.
+    3.  **Kurtarma Başarılı (Recovery Success):** Yedek kanala geçildikten sonra veriler tekrar nominal değerlerine döner, alarm temizlenir ve uydu görevine otonom olarak geri döner.
+
 ---
 
 ## 🖥️ 2. Sistem Çalışma Düzeni ve Terminal Matrisi (Ubuntu/WSL Terminalleri)
