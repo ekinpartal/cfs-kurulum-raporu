@@ -70,7 +70,7 @@ Dashboard arayüzünde yer alan ve uygulamaya eklediğimiz o efsanevi özellikle
 *   **🔳 THERMAL CAMERA:** Jet Colormap renk algoritmasını kullanarak kızılötesi görüntülemeyi aktif eder.
 *   **🔳 FIT IMAGE TO SCREEN:** Görüntüyü pencereye sığdırır, interaktif zoom modunun başlangıç ayarıdır.
 *   **📐 BUILD CONSTELLATION NET:** Yıldızları lazer çizgileriyle bağlayıp navigasyonel mesafe nirengi hesaplamasını başlatır.
-*   **🛸 ENABLE ACTIVE RADAR SCANNER:** Saniyede 30 tur dönen konik sensör okuma radarını açıp kapatır.
+*   **🛸 RADAR BEAM ON / OFF BUTONLARI:** Saniyede 30 tur dönen konik sensör okuma radarını başlatmak veya tamamen gizlemek için kullanılan özel kontrol butonlarıdır.
 
 ---
 
