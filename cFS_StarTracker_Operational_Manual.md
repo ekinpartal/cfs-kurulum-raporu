@@ -40,7 +40,13 @@ Bugün gerçekleştirdiğimiz çalışmalarla uydunun beynini ve takip arayüzü
 
 ### 🔴 G. Gerçek Zamanlı Canlı ISS ve Dünya İzleme Sekmesi (Live Space Tracker)
 *   Arayüze yerleştirilen `QTabWidget` sayesinde, cFS simülasyonunun yanı sıra gerçek dünya uzay operasyonlarını izleme yeteneği kazandırılmıştır.
-*   **Gerçek Zamanlı ISS Takibi:** `LiveISSTrackerWidget`, açık kaynaklı `open-notify` API servisine bağlanarak uzayda şu an aktif olarak uçmakta olan **Uluslararası Uzay İstasyonu (ISS)**'nun canlı coğrafi koordinatlarını saniyeler içinde çeker ve harita üzerinde **neon turuncu** renkli iz düşümüyle gösterir.
+*   **Çoklu Uydu Canlı Takibi (Multi-Satellite Tracking):** Harita üzerinde 4 farklı uzay aracının/uydunun gerçek zamanlı konumları ve yörünge izleri (ground track) farklı neon renklerle çizilir:
+    *   **Uluslararası Uzay İstasyonu (ISS):** `open-notify` API'sinden çekilen anlık koordinatlarla takip edilir. (Renk: **Neon Turuncu**)
+    *   **Hubble Uzay Teleskobu (HST):** Gerçek yörünge eğikliği ($28.5^\circ$) ve periyoduyla simüle edilir. (Renk: **Neon Camgöbeği**)
+    *   **Starlink-1017 Uydusu:** Küresel internet takım uydusu yörüngesi ($53^\circ$ eğiklik) simüle edilir. (Renk: **Neon Sarı**)
+    *   **NOAA-19 Meteoroloji Uydusu:** Polar (kutsal) yörünge ($99^\circ$ eğiklik) takip edilir. (Renk: **Neon Macenta**)
+*   **Güneş Havası Durumu (Solar Weather):** NOAA uzay hava tahmin merkezinden alınan güneş rüzgarları hızı, Kp manyetik fırtına indeksi ve güneş patlaması risk seviyeleri canlı olarak gösterilir.
+*   **Uzaydaki İnsan Sayısı (Astronauts in Space):** Şu an uzayda aktif görev yapan astronot sayısı (`TOTAL CREW`) ve isimleri `astros.json` API'sinden çekilerek dinamik scroll panelinde listelenir.
 *   **Canlı Dünya Görüntüsü (DSCOVR/EPIC):** NASA'nın Lagrange-1 noktasındaki **DSCOVR** uydusunda yer alan **EPIC (Earth Polychromatic Imaging Camera)** kamerasından çekilmiş en güncel gerçek Dünya fotoğrafları arka planda indirilerek canlı yayın modülüyle ekrana basılır.
 
 ---
